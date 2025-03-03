@@ -1,0 +1,39 @@
+{
+  "name": "examen1",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon",
+    "migrate": "npx drizzle-kit migrate --config=./drizzle.config.ts",
+    "generate": "npx drizzle-kit generate --config=./drizzle.config.ts",
+    "studio": "npx drizzle-kit studio --config=./drizzle.config.ts"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.40.0",
+    "express": "^4.21.2",
+    "express-validator": "^7.2.1",
+    "morgan": "~1.9.1",
+    "nodemon": "^3.1.9",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "pg": "^8.13.3",
+    "postgres": "^3.4.5",
+    "stripe": "^17.7.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.5",
+    "@types/passport": "^1.0.17",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/pg": "^8.11.11",
+    "drizzle-kit": "^0.30.5",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  }
+}

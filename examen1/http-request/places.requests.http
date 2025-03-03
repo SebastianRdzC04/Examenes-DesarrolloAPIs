@@ -1,0 +1,41 @@
+###
+@baseUrl = localhost:777/places
+###
+
+### GET para obtener todos los lugares
+GET {{baseUrl}}
+
+###
+
+### GET para obtener un lugar por su id
+GET {{baseUrl}}/2e80d4fb-a418-4972-a491-9967e959b1ad
+###
+
+### POST para crear un lugar
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "data": {
+    "name": "que rollore",
+    "description": "asdfasdfasdfasdf",
+    "max_capacity": "90"
+  }
+}
+###
+
+### PUT para actualizar un lugar
+PUT {{baseUrl}}/update/2e80d4fb-a418-4972-a491-9967e959b1ad
+Content-Type: application/json
+
+{
+    "data": {
+      "description": "que es esta mamada"
+    }
+}
+###
+
+### DELETE para eliminar un lugar
+DELETE {{baseUrl}}/delete/2e80d4fb-a418-4972-a491-9967e959b1ad
+
+###
