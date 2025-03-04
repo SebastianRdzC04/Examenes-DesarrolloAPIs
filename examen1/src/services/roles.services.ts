@@ -1,14 +1,16 @@
 import {db} from '../database';
 import * as models from "../database/schemas";
 import {eq, and} from "drizzle-orm";
+import {Rol} from "../models/rol.model";
 
 
 const getRoleByName = async (name: string) => {
     const [role] = await db.select()
         .from(models.rolesSchema)
         .where(eq(models.rolesSchema.name, name))
-        .execute()
-    return role
+        .execute();
+    const rolreturn = new Rol(role)
+    return rolreturn
 }
 
 export const rolesServices = {

@@ -45,28 +45,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.placesServices = void 0;
 const database_1 = require("../database");
 const schemas = __importStar(require("../database/schemas"));
+const place_model_1 = require("../models/place.model");
 const drizzle_orm_1 = require("drizzle-orm");
 const getAllPlaces = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield database_1.db.select().from(schemas.placesSchema).where((0, drizzle_orm_1.eq)(schemas.placesSchema.is_on, true)).execute();
+    const places = yield database_1.db.select().from(schemas.placesSchema).where((0, drizzle_orm_1.eq)(schemas.placesSchema.is_on, true)).execute();
+    return places.map(place => new place_model_1.Place(place));
 });
 const createPlace = (placeData) => __awaiter(void 0, void 0, void 0, function* () {
     const [place] = yield database_1.db.insert(schemas.placesSchema).values(placeData).returning();
-    return place;
+    const placeModel = new place_model_1.Place(place);
+    return placeModel;
 });
 const getPlaceById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const [place] = yield database_1.db.select()
         .from(schemas.placesSchema)
         .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(schemas.placesSchema.id, id), (0, drizzle_orm_1.eq)(schemas.placesSchema.is_on, true)))
         .execute();
-    return place;
+    return new place_model_1.Place(place);
 });
 const deletePlace = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const [place] = yield database_1.db.update(schemas.placesSchema).set({ is_on: false }).where((0, drizzle_orm_1.eq)(schemas.placesSchema.id, id)).returning();
-    return place;
+    return new place_model_1.Place(place);
 });
 const updatePlace = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
     const [place] = yield database_1.db.update(schemas.placesSchema).set(data).where((0, drizzle_orm_1.eq)(schemas.placesSchema.id, id)).returning();
-    return place;
+    return new place_model_1.Place(place);
 });
 exports.placesServices = {
     getAllPlaces,

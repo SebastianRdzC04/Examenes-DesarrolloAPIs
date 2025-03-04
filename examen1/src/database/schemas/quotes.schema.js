@@ -9,8 +9,8 @@ const events_schema_1 = require("./events.schema");
 const quotesEnnum = (0, pg_core_1.pgEnum)('status', ['pending', 'accepted', 'rejected']);
 exports.quotesSchema = (0, pg_core_1.pgTable)('quotes', {
     id: (0, pg_core_1.uuid)().primaryKey().defaultRandom(),
-    user_id: (0, pg_core_1.uuid)().references(() => users_schema_1.usersSchema.id),
-    place_id: (0, pg_core_1.uuid)().references(() => places_schema_1.placesSchema.id),
+    user_id: (0, pg_core_1.uuid)().references(() => users_schema_1.usersSchema.id).notNull(),
+    place_id: (0, pg_core_1.uuid)().references(() => places_schema_1.placesSchema.id).notNull(),
     title: (0, pg_core_1.varchar)({ length: 255 }).notNull(),
     date: (0, pg_core_1.date)().notNull(),
     status: quotesEnnum().notNull().default('pending'),

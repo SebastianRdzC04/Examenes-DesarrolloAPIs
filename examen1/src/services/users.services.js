@@ -45,13 +45,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersServices = void 0;
 const database_1 = require("../database");
 const models = __importStar(require("../database/schemas"));
+const user_model_1 = require("../models/user.model");
 const drizzle_orm_1 = require("drizzle-orm");
 const getAllUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     return yield database_1.db.select().from(models.usersSchema).where((0, drizzle_orm_1.eq)(models.usersSchema.is_on, true)).execute();
 });
 const createUser = (userData) => __awaiter(void 0, void 0, void 0, function* () {
     const [user] = yield database_1.db.insert(models.usersSchema).values(userData).returning();
-    return user;
+    const userWithRole = yield database_1.db.query.usersSchema.findFirst({
+        where: (0, drizzle_orm_1.eq)(models.usersSchema.id, user.id),
+        with: {
+            role: true
+        }
+    });
+    console.log(userWithRole);
+    if (!userWithRole) {
+        throw new Error('User not found');
+    }
+    const userCreated = new user_model_1.User(userWithRole);
+    return userCreated;
 });
 const getUserByPhone = (phone) => __awaiter(void 0, void 0, void 0, function* () {
     const [user] = yield database_1.db.select()

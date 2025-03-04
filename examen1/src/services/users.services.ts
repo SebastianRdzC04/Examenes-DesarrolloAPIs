@@ -1,7 +1,8 @@
 import {db} from '../database';
 import * as models from "../database/schemas";
-import {UserInterface} from "../models/user.model";
+import {User, UserInterface} from "../models/user.model";
 import {eq, and} from "drizzle-orm";
+import {RolInterface} from "../models/rol.model";
 
 const getAllUsers = async () => {
     return await db.select().from(models.usersSchema).where(eq(models.usersSchema.is_on, true)).execute()
@@ -9,7 +10,18 @@ const getAllUsers = async () => {
 
 const createUser = async (userData: UserInterface)=> {
     const [user] = await db.insert(models.usersSchema).values(userData).returning()
-    return user
+    const userWithRole  = await db.query.usersSchema.findFirst({
+        where: eq(models.usersSchema.id, user.id),
+        with: {
+            role: true
+        }
+    })
+    console.log(userWithRole)
+    if (!userWithRole) {
+        throw new Error('User not found')
+    }
+    const userCreated = new User(userWithRole)
+    return userCreated
 }
 
 const getUserByPhone = async (phone: string) => {

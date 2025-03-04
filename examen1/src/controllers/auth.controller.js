@@ -29,10 +29,11 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return;
     }
     const hashedPassword = yield bcrypt_1.default.hash(data.password, 10);
-    const role = yield roles_services_1.rolesServices.getRoleByName('user');
-    const userToCreate = Object.assign(Object.assign({}, data), { role_id: "4d051d19-b7bf-4609-a344-612fe1ec8f51", password: hashedPassword });
+    const role = yield roles_services_1.rolesServices.getRoleByName('client');
+    const userToCreate = Object.assign(Object.assign({}, data), { role_id: role.id, password: hashedPassword });
     try {
         const user = yield users_services_1.usersServices.createUser(userToCreate);
+        console.log('querollo', user);
         res.json({ msg: 'User created', ctx: [user] });
     }
     catch (err) {

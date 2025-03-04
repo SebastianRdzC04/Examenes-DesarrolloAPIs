@@ -17,8 +17,8 @@ Content-Type: application/json
 
 {
   "data": {
-    "name": "que rollore",
-    "description": "asdfasdfasdfasdf",
+    "name": "Quinta bonita",
+    "description": "quinta verguisima",
     "max_capacity": "90"
   }
 }

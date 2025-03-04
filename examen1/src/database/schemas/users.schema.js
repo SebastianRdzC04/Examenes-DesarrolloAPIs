@@ -12,12 +12,12 @@ exports.usersSchema = (0, pg_core_1.pgTable)('users', {
     phone: (0, pg_core_1.varchar)({ length: 20 }).notNull(),
     password: (0, pg_core_1.varchar)().notNull(),
     created_at: (0, pg_core_1.timestamp)().defaultNow(),
-    role_id: (0, pg_core_1.uuid)().references(() => roles_schema_1.rolesSchema.id),
+    role_id: (0, pg_core_1.uuid)().references(() => roles_schema_1.rolesSchema.id).notNull(),
     is_on: (0, pg_core_1.boolean)().default(true).notNull(),
 });
 exports.usersRelations = (0, drizzle_orm_1.relations)(exports.usersSchema, ({ one, many }) => ({
     role: one(roles_schema_1.rolesSchema, {
-        fields: [exports.usersSchema.id],
+        fields: [exports.usersSchema.role_id],
         references: [roles_schema_1.rolesSchema.id],
     }),
     quotes: many(quotes_schema_1.quotesSchema),

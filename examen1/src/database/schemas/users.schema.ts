@@ -10,14 +10,14 @@ export const usersSchema = pgTable('users', {
     phone: varchar({length: 20}).notNull(),
     password: varchar().notNull(),
     created_at: timestamp().defaultNow(),
-    role_id: uuid().references(() => rolesSchema.id),
+    role_id: uuid().references(() => rolesSchema.id).notNull(),
     is_on: boolean().default(true).notNull(),
 });
 
 
 export const usersRelations = relations(usersSchema, ({one, many}) => ({
     role: one(rolesSchema, {
-        fields: [usersSchema.id],
+        fields: [usersSchema.role_id],
         references: [rolesSchema.id],
     }),
     quotes: many(quotesSchema),

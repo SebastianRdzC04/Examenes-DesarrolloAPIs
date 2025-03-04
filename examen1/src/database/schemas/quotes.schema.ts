@@ -8,8 +8,8 @@ const quotesEnnum = pgEnum('status', ['pending', 'accepted', 'rejected'])
 
 export const quotesSchema = pgTable('quotes', {
     id: uuid().primaryKey().defaultRandom(),
-    user_id: uuid().references(() => usersSchema.id),
-    place_id: uuid().references(() => placesSchema.id),
+    user_id: uuid().references(() => usersSchema.id).notNull(),
+    place_id: uuid().references(() => placesSchema.id).notNull(),
     title: varchar({length: 255}).notNull(),
     date: date().notNull(),
     status: quotesEnnum().notNull().default('pending'),

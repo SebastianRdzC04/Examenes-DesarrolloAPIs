@@ -18,14 +18,15 @@ const register = async (req: Request, res: Response) => {
         return
     }
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    const role = await rolesServices.getRoleByName('user');
+    const role = await rolesServices.getRoleByName('client');
     const userToCreate: UserInterface = {
         ...data,
-        role_id: "4d051d19-b7bf-4609-a344-612fe1ec8f51",
+        role_id: role.id,
         password: hashedPassword
     };
     try {
         const user = await usersServices.createUser(userToCreate);
+        console.log('querollo', user)
         res.json({msg: 'User created', ctx: [user]});
     } catch (err) {
         console.error(err);
