@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const stripe_1 = __importDefault(require("stripe"));
+const message_services_1 = require("../services/message.services");
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY, {
     apiVersion: '2025-02-24.acacia',
     typescript: true
@@ -33,7 +34,15 @@ router.post('/', express_1.default.raw({ type: 'application/json' }), (req, res)
     }
     if (event.type === 'payment_intent.succeeded') {
         const paymentIntent = event.data.object;
-        console.log('Pago exitoso:', paymentIntent.id);
+        console.log('Pago exitoso:', paymentIntent.metadata);
+        try {
+            yield message_services_1.messageServices.sendMessage(paymentIntent.metadata.phone, `Tu pago ha sido exitoso, tu cita ha sido agendada para el 
+            ${paymentIntent.metadata.date} a las 
+            ${paymentIntent.metadata.time} en ${paymentIntent.metadata.place}`);
+        }
+        catch (err) {
+            console.error(err);
+        }
     }
     else if (event.type === 'payment_intent.payment_failed') {
         console.log('Pago fallido:', event.data.object.id);

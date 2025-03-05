@@ -89,6 +89,24 @@ const getQuotesByUser = async (user_id: string) => {
     return quotes.map(quote => new Quote(quote))
 }
 
+const acceptQuote = async (id: string) => {
+    const [quote] = await db.update(models.quotesSchema)
+        .set({status: 'accepted'})
+        .where(eq(models.quotesSchema.id, id))
+        .returning()
+    const quoteWithRelations = await db.query.quotesSchema.findFirst({
+        where: eq(models.quotesSchema.id, id),
+        with: {
+            user: true,
+            place: true
+        }
+    })
+    if (!quoteWithRelations) {
+        throw new Error('Quote not found')
+    }
+    return new Quote(quoteWithRelations)
+}
+
 const cancelQuote = async (id: string) => {
     const [quote] = await db.update(models.quotesSchema)
         .set({status: 'rejected'})
@@ -113,5 +131,6 @@ export const quotesServices = {
     getQuotesByDate,
     getQuotesByPlace,
     getQuotesByUser,
-    cancelQuote
+    cancelQuote,
+    acceptQuote
 }

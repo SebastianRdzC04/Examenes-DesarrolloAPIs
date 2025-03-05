@@ -37,4 +37,6 @@ router.post('/:id/update',
     quotesValidator.validateQuoteDataUser,
     quotesController.updateQuoteUser)
 
+router.post('/pay/:id', quotesController.payQuote)
+
 export default router

@@ -1,6 +1,9 @@
 import {Request, Response} from "express";
 import {body, validationResult, matchedData, param} from "express-validator";
 import {quotesServices} from "../services/quotes.services";
+import {paymentServices} from "../services/payment.services";
+import {EventInterface} from "../models/event.model";
+import {eventsServices} from "../services/events.services";
 
 const createQuote = async (req: Request, res: Response) => {
     try {
@@ -139,6 +142,70 @@ const getQuotesByUser = async (req: Request, res: Response) => {
     return
 }
 
+const payQuote = async (req: Request, res: Response) => {
+    try {
+        const {id} = req.params;
+
+        const {amount, paymentId} = req.body
+
+        const quoteExisting = await quotesServices.getQuoteById(id);
+
+        if (!quoteExisting) {
+            res.status(404).json({msg: 'Quote does not exist'});
+            return
+        }
+        if (quoteExisting.status !== 'pending') {
+            res.status(400).json({msg: 'Quote is not valid'});
+            return
+        }
+        if (!quoteExisting.espected_advance) {
+            res.status(400).json({msg: 'Quote does not have an expected advance'});
+            return
+        }
+        if(quoteExisting.espected_advance > amount){
+            res.status(400).json({msg: 'Amount is not enough'});
+            return
+        }
+
+        const quote = await quotesServices.acceptQuote(id);
+
+        try {
+            const dataToPayment = {
+                phone: quote.user?.phone as string,
+                place: quote.place?.name as string,
+                date: quote.date.toString(),
+                time: '20:00'
+            }
+            await paymentServices.createPaymentIntent(amount, paymentId, dataToPayment);
+
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({msg: 'Internal server error', ctx: []});
+            return
+        }
+        const eventData: EventInterface = {
+            date: quote.date.toString(),
+            place_id: quote.place_id,
+            quote_id: id,
+            user_id: quote.user_id,
+            description: '',
+            total_payed: amount,
+            total_price: quote.estimated_price as number,
+            total_debt: quote.estimated_price as number - amount,
+            time_toStart: '20:00'
+        }
+
+        const event = await eventsServices.createEvent(eventData);
+
+
+        res.json({msg: 'Successfully paid quote', ctx: quote});
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({msg: 'Internal server error', ctx: []});
+    }
+}
+
 export const quotesController = {
     createQuote,
     updateQuoteAdmin,
@@ -147,5 +214,6 @@ export const quotesController = {
     getQuote,
     getQuotesByDate,
     getQuotesByPlace,
-    getQuotesByUser
+    getQuotesByUser,
+    payQuote
 }

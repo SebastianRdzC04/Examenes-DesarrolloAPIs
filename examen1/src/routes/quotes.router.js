@@ -15,4 +15,5 @@ router.get('/user/:user_id', quotes_validator_1.quotesValidator.validateUserId, 
 router.delete('/cancel/:id', quotes_validator_1.quotesValidator.validateQuoteId, quotes_controller_1.quotesController.cancelQuote);
 router.post('/:id/admin', quotes_validator_1.quotesValidator.validateQuoteId, quotes_validator_1.quotesValidator.validateQuoteDataAdmin, quotes_controller_1.quotesController.updateQuoteAdmin);
 router.post('/:id/update', quotes_validator_1.quotesValidator.validateQuoteId, quotes_validator_1.quotesValidator.validateQuoteDataUser, quotes_controller_1.quotesController.updateQuoteUser);
+router.post('/pay/:id', quotes_controller_1.quotesController.payQuote);
 exports.default = router;

@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.quotesController = void 0;
 const express_validator_1 = require("express-validator");
 const quotes_services_1 = require("../services/quotes.services");
+const payment_services_1 = require("../services/payment.services");
+const events_services_1 = require("../services/events.services");
 const createQuote = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
@@ -122,6 +124,62 @@ const getQuotesByUser = (req, res) => __awaiter(void 0, void 0, void 0, function
     res.json({ msg: 'Quotes by user', ctx: quotes });
     return;
 });
+const payQuote = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    try {
+        const { id } = req.params;
+        const { amount, paymentId } = req.body;
+        const quoteExisting = yield quotes_services_1.quotesServices.getQuoteById(id);
+        if (!quoteExisting) {
+            res.status(404).json({ msg: 'Quote does not exist' });
+            return;
+        }
+        if (quoteExisting.status !== 'pending') {
+            res.status(400).json({ msg: 'Quote is not valid' });
+            return;
+        }
+        if (!quoteExisting.espected_advance) {
+            res.status(400).json({ msg: 'Quote does not have an expected advance' });
+            return;
+        }
+        if (quoteExisting.espected_advance > amount) {
+            res.status(400).json({ msg: 'Amount is not enough' });
+            return;
+        }
+        const quote = yield quotes_services_1.quotesServices.acceptQuote(id);
+        try {
+            const dataToPayment = {
+                phone: (_a = quote.user) === null || _a === void 0 ? void 0 : _a.phone,
+                place: (_b = quote.place) === null || _b === void 0 ? void 0 : _b.name,
+                date: quote.date.toString(),
+                time: '20:00'
+            };
+            yield payment_services_1.paymentServices.createPaymentIntent(amount, paymentId, dataToPayment);
+        }
+        catch (err) {
+            console.error(err);
+            res.status(500).json({ msg: 'Internal server error', ctx: [] });
+            return;
+        }
+        const eventData = {
+            date: quote.date.toString(),
+            place_id: quote.place_id,
+            quote_id: id,
+            user_id: quote.user_id,
+            description: '',
+            total_payed: amount,
+            total_price: quote.estimated_price,
+            total_debt: quote.estimated_price - amount,
+            time_toStart: '20:00'
+        };
+        const event = yield events_services_1.eventsServices.createEvent(eventData);
+        res.json({ msg: 'Successfully paid quote', ctx: quote });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ msg: 'Internal server error', ctx: [] });
+    }
+});
 exports.quotesController = {
     createQuote,
     updateQuoteAdmin,
@@ -130,5 +188,6 @@ exports.quotesController = {
     getQuote,
     getQuotesByDate,
     getQuotesByPlace,
-    getQuotesByUser
+    getQuotesByUser,
+    payQuote
 };

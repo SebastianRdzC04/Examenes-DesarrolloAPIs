@@ -107,6 +107,23 @@ const getQuotesByUser = (user_id) => __awaiter(void 0, void 0, void 0, function*
         .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(models.quotesSchema.user_id, user_id), (0, drizzle_orm_1.eq)(models.quotesSchema.is_on, true))).execute();
     return quotes.map(quote => new quote_model_1.Quote(quote));
 });
+const acceptQuote = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const [quote] = yield database_1.db.update(models.quotesSchema)
+        .set({ status: 'accepted' })
+        .where((0, drizzle_orm_1.eq)(models.quotesSchema.id, id))
+        .returning();
+    const quoteWithRelations = yield database_1.db.query.quotesSchema.findFirst({
+        where: (0, drizzle_orm_1.eq)(models.quotesSchema.id, id),
+        with: {
+            user: true,
+            place: true
+        }
+    });
+    if (!quoteWithRelations) {
+        throw new Error('Quote not found');
+    }
+    return new quote_model_1.Quote(quoteWithRelations);
+});
 const cancelQuote = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const [quote] = yield database_1.db.update(models.quotesSchema)
         .set({ status: 'rejected' })
@@ -129,5 +146,6 @@ exports.quotesServices = {
     getQuotesByDate,
     getQuotesByPlace,
     getQuotesByUser,
-    cancelQuote
+    cancelQuote,
+    acceptQuote
 };

@@ -11,20 +11,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.eventsValidator = void 0;
 const express_validator_1 = require("express-validator");
-const validateDataToCreate = (req, res, next) => {
+const validateDataToCreate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const validations = [
-        (0, express_validator_1.body)('data.quote_id').isString().notEmpty().withMessage('Title is required'),
-        (0, express_validator_1.body)('data.time_toStart').isDate().notEmpty().withMessage('Date is required'),
-        (0, express_validator_1.body)('data.total_payed').isUUID().notEmpty().withMessage('place_id is required')
+        (0, express_validator_1.body)('data.quote_id').isUUID().optional().notEmpty().withMessage('Title is required'),
+        (0, express_validator_1.body)('data.time_toStart').isString().optional().notEmpty().withMessage('Date is required'),
+        (0, express_validator_1.body)('data.total_payed').isNumeric().optional().notEmpty().withMessage('place_id is required')
     ];
-    validations.forEach(validation => validation.run(req));
+    yield Promise.all(validations.map(validation => validation.run(req)));
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         res.status(400).json({ error: errors.array() });
         return;
     }
     next();
-};
+});
 const validateDataAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const validations = [
         (0, express_validator_1.body)('data.total_price').isString().optional().notEmpty().withMessage('Title is required'),

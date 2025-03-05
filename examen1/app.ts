@@ -11,6 +11,10 @@ import passport from "passport";
 import {passportConfig} from "./src/auth";
 import eventsRouter from "./src/routes/events.router";
 
+
+import {paymentServices} from "./src/services/payment.services";
+import {quotesController} from "./src/controllers/quotes.controller";
+
 passportConfig(passport)
 
 const port = process.env.PORT || 3000
@@ -25,9 +29,7 @@ app.use('/places', placesRouter)
 app.use('/quotes',passport.authenticate('jwt', {session: false}), quotesRouter)
 app.use('/events',passport.authenticate('jwt', {session: false}), eventsRouter)
 
-app.get('/test', async(req: Request, res: Response) => {
-    res.json({message: 'Hello World'})
-})
+app.post('/test/:id', quotesController.payQuote)
 
 app.listen(port, () => {
     console.log('Server running on port ', port)

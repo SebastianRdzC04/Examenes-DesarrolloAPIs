@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -22,6 +13,7 @@ const quotes_router_1 = __importDefault(require("./src/routes/quotes.router"));
 const passport_1 = __importDefault(require("passport"));
 const auth_1 = require("./src/auth");
 const events_router_1 = __importDefault(require("./src/routes/events.router"));
+const quotes_controller_1 = require("./src/controllers/quotes.controller");
 (0, auth_1.passportConfig)(passport_1.default);
 const port = process.env.PORT || 3000;
 const app = (0, express_1.default)();
@@ -32,9 +24,7 @@ app.use('/auth', auth_router_1.default);
 app.use('/places', places_router_1.default);
 app.use('/quotes', passport_1.default.authenticate('jwt', { session: false }), quotes_router_1.default);
 app.use('/events', passport_1.default.authenticate('jwt', { session: false }), events_router_1.default);
-app.get('/test', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.json({ message: 'Hello World' });
-}));
+app.post('/test/:id', quotes_controller_1.quotesController.payQuote);
 app.listen(port, () => {
     console.log('Server running on port ', port);
 });

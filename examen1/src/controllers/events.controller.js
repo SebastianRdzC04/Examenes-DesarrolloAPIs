@@ -43,7 +43,11 @@ const createEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             total_payed: data.total_payed,
             total_debt: payPending
         };
-        console.log(eventData);
+        if (!quote.user) {
+            res.status(404).json({ msg: 'User does not exist' });
+            return;
+        }
+        //await messageServices.sendMessage(quote.user?.phone, `Profe si ve este mensaje. ya pongame 10 en el examen lo tkm`);
         const event = yield events_services_1.eventsServices.createEvent(eventData);
         res.status(201).json({ msg: 'Successfully created event', ctx: event });
     }

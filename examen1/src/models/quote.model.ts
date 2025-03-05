@@ -27,7 +27,7 @@ interface QuoteInterfaceModel {
     estimated_price: number | null,
     espected_advance: number | null,
     is_on: boolean,
-    event?: Event
+    event?: Event | null
 }
 
 export class Quote{
@@ -42,7 +42,7 @@ export class Quote{
     estimated_price: number | null;
     espected_advance: number | null;
     is_on: boolean;
-    event?: Event;
+    event?: Event | null;
 
     constructor(quote: QuoteInterfaceModel) {
         this.id = quote.id;

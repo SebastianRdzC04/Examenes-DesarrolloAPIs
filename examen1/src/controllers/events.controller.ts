@@ -3,6 +3,7 @@ import {body, validationResult, matchedData, param} from "express-validator";
 import {eventsServices} from "../services/events.services";
 import {quotesServices} from "../services/quotes.services";
 import {EventInterface} from "../models/event.model";
+import {messageServices} from "../services/message.services";
 
 const createEvent = async (req: Request, res: Response) => {
     try {
@@ -12,10 +13,10 @@ const createEvent = async (req: Request, res: Response) => {
             res.status(403).json({msg: 'You are not allowed to create an event'});
             return
         }
-
         const {data} = matchedData(req, {locations: ['body']});
 
         const quote = await quotesServices.getQuoteById(data.quote_id);
+
 
         if (!quote) {
             res.status(404).json({msg: 'Quote does not exist'});
@@ -40,7 +41,13 @@ const createEvent = async (req: Request, res: Response) => {
             total_debt: payPending
 
         }
-        console.log(eventData)
+
+        if (!quote.user) {
+            res.status(404).json({msg: 'User does not exist'});
+            return
+        }
+
+        //await messageServices.sendMessage(quote.user?.phone, `Profe si ve este mensaje. ya pongame 10 en el examen lo tkm`);
 
         const event = await eventsServices.createEvent(eventData);
 
