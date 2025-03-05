@@ -1,5 +1,91 @@
-### GET request to example server
-GET https://examples.http-client.intellij.net/get
-    ?generated-in=WebStorm
+### variables
 
+@baseUrl = localhost:777
+
+@quotesurl = localhost:777/quotes
+
+
+###
+
+### POST para iniciar sesión
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "phone": "12345678901",
+  "password": "123456"
+}
+> {%
+    client.global.set("token", response.body.data.token);
+%}
+###
+
+### Post para crear una cita
+POST localhost:777/quotes/create
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "data": {
+        "title": "mi fiestota",
+        "date": "2025-03-10",
+        "place_id": "45a1751d-f9a7-4307-b16c-a53e08b24256"
+
+    }
+}
+###
+
+### GET para obtener una cita por su id
+GET {{quotesurl}}/1d49d153-4558-48eb-b27c-e6292a063760
+Authorization: Bearer {{token}}
+###
+
+### Get para obtener citas por usuario
+GET {{quotesurl}}/user/1d60d422-65d0-42cd-bf26-e738fd863bf8
+Authorization: Bearer {{token}}
+###
+
+### Get para obtener las quotes por fecha
+GET {{quotesurl}}/date/2025-03-10
+Authorization: Bearer {{token}}
+###
+
+### Get para obtener las quotes por lugar
+GET {{quotesurl}}/place/45a1751d-f9a7-4307-b16c-a53e08b24256
+Authorization: Bearer {{token}}
+###
+
+### POST para editar una quote siendo admin
+POST {{quotesurl}}/1d49d153-4558-48eb-b27c-e6292a063760/admin
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "data": {
+        "estimated_price": "4500",
+        "espected_advance": "900",
+        "title": "ahora si no va a cambiar porque no va a llegar",
+        "pene": "pene durisimo",
+        "ay": "esto no debe aparecer"
+    }
+}
+###
+
+### Delete para cancelar una cita
+DELETE {{quotesurl}}/cancel/911cc747-5f99-4c4e-a973-f6c4e4d985c9
+Authorization: Bearer {{token}}
+###
+
+### Post para editar cita del usuario
+POST {{quotesurl}}/1d49d153-4558-48eb-b27c-e6292a063760/update
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "data": {
+        "title": "Solo cambiara el titulo y el estimated price desaparecera",
+        "estimated_price": "50000",
+        "espected_advance": "10000"
+    }
+}
 ###

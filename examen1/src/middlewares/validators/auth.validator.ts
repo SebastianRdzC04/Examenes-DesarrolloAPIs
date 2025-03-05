@@ -20,7 +20,6 @@ const validateLoginData: RequestHandler = async (req: Request, res: Response, ne
 
 const validateRegisterData = async (req: Request, res: Response, next: NextFunction) => {
     const validationsA = [
-        body('data').isObject().notEmpty().withMessage('Data is required'),
         body('data.phone').isString().isLength({min: 10, max: 18}).notEmpty().withMessage('Phone is required'),
         body('data.password').isString().notEmpty().withMessage('Password is required'),
         body('data.username').isString().notEmpty().withMessage('Username is required'),

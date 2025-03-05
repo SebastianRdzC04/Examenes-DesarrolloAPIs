@@ -21,7 +21,7 @@ const createUser = async (userData: UserInterface)=> {
         throw new Error('User not found')
     }
     const userCreated = new User(userWithRole)
-    return userCreated
+    return userWithRole
 }
 
 const getUserByPhone = async (phone: string) => {

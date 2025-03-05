@@ -1,5 +1,6 @@
 import {User, UserInterface} from "./user.model";
 import {Place, PlaceInterface} from "./place.model";
+import {Event} from "./event.model";
 
 export interface quoteInterface {
     id: string,
@@ -25,7 +26,8 @@ interface QuoteInterfaceModel {
     status: 'pending' | 'accepted' | 'rejected',
     estimated_price: number | null,
     espected_advance: number | null,
-    is_on: boolean
+    is_on: boolean,
+    event?: Event
 }
 
 export class Quote{
@@ -40,6 +42,7 @@ export class Quote{
     estimated_price: number | null;
     espected_advance: number | null;
     is_on: boolean;
+    event?: Event;
 
     constructor(quote: QuoteInterfaceModel) {
         this.id = quote.id;
@@ -53,5 +56,6 @@ export class Quote{
         this.estimated_price = quote.estimated_price;
         this.espected_advance = quote.espected_advance;
         this.is_on = quote.is_on;
+        this.event = quote.event;
     }
 }

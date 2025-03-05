@@ -18,8 +18,10 @@ const webhook_router_1 = __importDefault(require("./src/routes/webhook.router"))
 const users_router_1 = __importDefault(require("./src/routes/users.router"));
 const auth_router_1 = __importDefault(require("./src/routes/auth.router"));
 const places_router_1 = __importDefault(require("./src/routes/places.router"));
+const quotes_router_1 = __importDefault(require("./src/routes/quotes.router"));
 const passport_1 = __importDefault(require("passport"));
 const auth_1 = require("./src/auth");
+const events_router_1 = __importDefault(require("./src/routes/events.router"));
 (0, auth_1.passportConfig)(passport_1.default);
 const port = process.env.PORT || 3000;
 const app = (0, express_1.default)();
@@ -28,6 +30,8 @@ app.use(express_1.default.json());
 app.use('/users', users_router_1.default);
 app.use('/auth', auth_router_1.default);
 app.use('/places', places_router_1.default);
+app.use('/quotes', passport_1.default.authenticate('jwt', { session: false }), quotes_router_1.default);
+app.use('/events', passport_1.default.authenticate('jwt', { session: false }), events_router_1.default);
 app.get('/test', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json({ message: 'Hello World' });
 }));

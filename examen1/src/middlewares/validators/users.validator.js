@@ -37,7 +37,6 @@ const validatePhone = (req, res, next) => __awaiter(void 0, void 0, void 0, func
 });
 const validateData = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const validations = [
-        (0, express_validator_1.body)('data').isObject().notEmpty().withMessage('Data is required'),
         (0, express_validator_1.body)('data.username').isString().withMessage('Name is required'),
         (0, express_validator_1.body)('data.phone').isString().withMessage('Description is required'),
     ];

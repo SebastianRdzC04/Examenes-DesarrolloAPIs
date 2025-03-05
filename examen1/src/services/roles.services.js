@@ -55,6 +55,15 @@ const getRoleByName = (name) => __awaiter(void 0, void 0, void 0, function* () {
     const rolreturn = new rol_model_1.Rol(role);
     return rolreturn;
 });
+const getRoleById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const [role] = yield database_1.db.select()
+        .from(models.rolesSchema)
+        .where((0, drizzle_orm_1.eq)(models.rolesSchema.id, id))
+        .execute();
+    const rolreturn = new rol_model_1.Rol(role);
+    return rolreturn;
+});
 exports.rolesServices = {
     getRoleByName,
+    getRoleById
 };

@@ -26,7 +26,6 @@ const validateLoginData = (req, res, next) => __awaiter(void 0, void 0, void 0, 
 });
 const validateRegisterData = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const validationsA = [
-        (0, express_validator_1.body)('data').isObject().notEmpty().withMessage('Data is required'),
         (0, express_validator_1.body)('data.phone').isString().isLength({ min: 10, max: 18 }).notEmpty().withMessage('Phone is required'),
         (0, express_validator_1.body)('data.password').isString().notEmpty().withMessage('Password is required'),
         (0, express_validator_1.body)('data.username').isString().notEmpty().withMessage('Username is required'),

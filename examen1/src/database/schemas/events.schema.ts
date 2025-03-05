@@ -8,14 +8,14 @@ const eventsEnnum = pgEnum('status', ['pending', 'on process', 'cancelled', 'don
 
 export const eventsSchema = pgTable('events', {
     id: uuid().primaryKey().defaultRandom(),
-    user_id: uuid().references(() => usersSchema.id),
+    user_id: uuid().references(() => usersSchema.id).notNull(),
     quote_id: uuid().references(() => quotesSchema.id).notNull(),
     description: varchar({length: 255}).notNull(),
     status: eventsEnnum().notNull().default('pending'),
     date: date().notNull(),
     time_toStart: time().notNull(),
     time_toEnd: time(),
-    place_id: uuid().references(() => placesSchema.id),
+    place_id: uuid().references(() => placesSchema.id).notNull(),
     total_price: integer().notNull(),
     total_payed: integer().notNull(),
     total_debt: integer().notNull(),
@@ -24,11 +24,11 @@ export const eventsSchema = pgTable('events', {
 
 export const eventsRelations = relations(eventsSchema, ({one, many}) => ({
     user: one(usersSchema, {
-        fields: [eventsSchema.id],
+        fields: [eventsSchema.user_id],
         references: [usersSchema.id],
     }),
     place: one(placesSchema, {
-        fields: [eventsSchema.id],
+        fields: [eventsSchema.place_id],
         references: [placesSchema.id]
     }),
     quote: one(quotesSchema, {

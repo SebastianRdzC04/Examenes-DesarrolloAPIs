@@ -25,7 +25,6 @@ const validateId = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 });
 const validateData = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const validations = [
-        (0, express_validator_1.body)('data').isObject().notEmpty().withMessage('Data is required'),
         (0, express_validator_1.body)('data.name').isString().optional().withMessage('Name is required'),
         (0, express_validator_1.body)('data.description').optional().isString().withMessage('Description is required'),
         (0, express_validator_1.body)('data.max_capacity').optional().isNumeric().withMessage('Max capacity must be a number')

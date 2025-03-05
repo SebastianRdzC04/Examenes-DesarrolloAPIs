@@ -21,7 +21,9 @@ const createQuote = async (quoteData: quoteInterface) => {
 const updateQuote = async (id: string, data: quoteInterface) => {
     const [quote] = await db.update(models.quotesSchema)
         .set(data)
-        .where(eq(models.quotesSchema.id, id))
+        .where(and(
+            eq(models.quotesSchema.id, id),
+            eq(models.quotesSchema.is_on, true)))
         .returning()
     return new Quote(quote)
 }
@@ -33,7 +35,23 @@ const getQuoteById = async (id: string) => {
             eq(models.quotesSchema.id, id),
             eq(models.quotesSchema.is_on, true))).execute()
 
-    return  new Quote(quote)
+    const quoteWithRelations = await db.query.quotesSchema.findFirst({
+        where: and(
+            eq(models.quotesSchema.id, id),
+            eq(models.quotesSchema.is_on, true)
+        ),
+        with: {
+            user: true,
+            place: true,
+            event: true
+        }
+    })
+
+    if (!quoteWithRelations) {
+        throw new Error('Quote not found')
+    }
+
+    return  new Quote(quoteWithRelations)
 }
 
 const getQuotesByDate = async (date: string) => {
@@ -71,6 +89,14 @@ const getQuotesByUser = async (user_id: string) => {
     return quotes.map(quote => new Quote(quote))
 }
 
+const cancelQuote = async (id: string) => {
+    const [quote] = await db.update(models.quotesSchema)
+        .set({status: 'rejected'})
+        .where(eq(models.quotesSchema.id, id))
+        .returning()
+    return new Quote(quote)
+}
+
 const deleteQuote = async (id: string) => {
     const [quote] = await db.update(models.quotesSchema)
         .set({is_on: false})
@@ -79,9 +105,13 @@ const deleteQuote = async (id: string) => {
     return new Quote(quote)
 }
 
-const quotesServices = {
+export const quotesServices = {
     createQuote,
     updateQuote,
     getQuoteById,
-    deleteQuote
+    deleteQuote,
+    getQuotesByDate,
+    getQuotesByPlace,
+    getQuotesByUser,
+    cancelQuote
 }

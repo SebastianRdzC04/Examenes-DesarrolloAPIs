@@ -33,7 +33,6 @@ const validatePhone: RequestHandler = async (req: Request, res: Response, next: 
 
 const validateData: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const validations = [
-        body('data').isObject().notEmpty().withMessage('Data is required'),
         body('data.username').isString().withMessage('Name is required'),
         body('data.phone').isString().withMessage('Description is required'),
     ];

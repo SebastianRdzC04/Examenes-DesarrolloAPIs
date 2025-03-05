@@ -19,7 +19,6 @@ const validateId: RequestHandler = async (req: Request, res: Response, next: Nex
 
 const validateData: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     const validations = [
-        body('data').isObject().notEmpty().withMessage('Data is required'),
         body('data.name').isString().optional().withMessage('Name is required'),
         body('data.description').optional().isString().withMessage('Description is required'),
         body('data.max_capacity').optional().isNumeric().withMessage('Max capacity must be a number')

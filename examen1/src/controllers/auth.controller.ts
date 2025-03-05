@@ -1,5 +1,6 @@
 import {Request, Response} from 'express';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import {usersServices} from "../services/users.services";
 import {UserInterface} from "../models/user.model";
 import {body, validationResult, matchedData} from "express-validator";
@@ -26,7 +27,7 @@ const register = async (req: Request, res: Response) => {
     };
     try {
         const user = await usersServices.createUser(userToCreate);
-        console.log('querollo', user)
+        console.log(user.role)
         res.json({msg: 'User created', ctx: [user]});
     } catch (err) {
         console.error(err);
@@ -41,12 +42,14 @@ const login = async (req: Request, res: Response) => {
         res.status(404).json({msg: 'User not found', ctx: []});
         return
     }
+    const userRol = await rolesServices.getRoleById(user.role_id);
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
         res.status(400).json({msg: 'Invalid credentials', ctx: []});
         return
     }
-    res.json({msg: 'Login successful', ctx: [user]});
+    const token = jwt.sign({id: user.id, role: userRol.name}, process.env.JWT_KEY_SECRET as string, {expiresIn: '1h'});
+    res.json({msg: 'Login successful', data: {token: token}});
 }
 
 export const authController = {

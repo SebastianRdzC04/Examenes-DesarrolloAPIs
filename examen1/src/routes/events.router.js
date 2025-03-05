@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const events_controller_1 = require("../controllers/events.controller");
+const events_validator_1 = require("../middlewares/validators/events.validator");
+const router = express_1.default.Router();
+router.post('/create', events_validator_1.eventsValidator.validateDataToCreate, events_controller_1.eventsController.createEvent);
+router.get('/:id', events_validator_1.eventsValidator.validateEventId, events_controller_1.eventsController.getEventById);
+router.get('/user/:user_id', events_validator_1.eventsValidator.validateUserId, events_controller_1.eventsController.getEventsByUser);
+router.get('/place/:place_id', events_validator_1.eventsValidator.validatePlaceId, events_controller_1.eventsController.getEventsByPlace);
+router.delete('/:id', events_validator_1.eventsValidator.validateEventId, events_controller_1.eventsController.deleteEvent);
+router.post('start/:id', events_validator_1.eventsValidator.validateEventId, events_controller_1.eventsController.startEvent);
+router.post('finish/:id', events_validator_1.eventsValidator.validateEventId, events_controller_1.eventsController.finishEvent);
+router.post('cancel/:id', events_validator_1.eventsValidator.validateEventId, events_controller_1.eventsController.cancelEvent);
+router.post('update/:id/admin', events_validator_1.eventsValidator.validateEventId, events_validator_1.eventsValidator.validateDataAdmin, events_controller_1.eventsController.updateEventAdmin);
+router.post('update/:id/user', events_validator_1.eventsValidator.validateEventId, events_validator_1.eventsValidator.validateDataUser, events_controller_1.eventsController.updateEventUser);
+exports.default = router;

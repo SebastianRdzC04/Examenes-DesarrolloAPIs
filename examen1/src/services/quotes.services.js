@@ -42,6 +42,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.quotesServices = void 0;
 const database_1 = require("../database");
 const models = __importStar(require("../database/schemas"));
 const drizzle_orm_1 = require("drizzle-orm");
@@ -63,7 +64,7 @@ const createQuote = (quoteData) => __awaiter(void 0, void 0, void 0, function* (
 const updateQuote = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
     const [quote] = yield database_1.db.update(models.quotesSchema)
         .set(data)
-        .where((0, drizzle_orm_1.eq)(models.quotesSchema.id, id))
+        .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(models.quotesSchema.id, id), (0, drizzle_orm_1.eq)(models.quotesSchema.is_on, true)))
         .returning();
     return new quote_model_1.Quote(quote);
 });
@@ -71,7 +72,18 @@ const getQuoteById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const [quote] = yield database_1.db.select()
         .from(models.quotesSchema)
         .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(models.quotesSchema.id, id), (0, drizzle_orm_1.eq)(models.quotesSchema.is_on, true))).execute();
-    return new quote_model_1.Quote(quote);
+    const quoteWithRelations = yield database_1.db.query.quotesSchema.findFirst({
+        where: (0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(models.quotesSchema.id, id), (0, drizzle_orm_1.eq)(models.quotesSchema.is_on, true)),
+        with: {
+            user: true,
+            place: true,
+            event: true
+        }
+    });
+    if (!quoteWithRelations) {
+        throw new Error('Quote not found');
+    }
+    return new quote_model_1.Quote(quoteWithRelations);
 });
 const getQuotesByDate = (date) => __awaiter(void 0, void 0, void 0, function* () {
     const quotes = yield database_1.db.query.quotesSchema.findMany({
@@ -95,6 +107,13 @@ const getQuotesByUser = (user_id) => __awaiter(void 0, void 0, void 0, function*
         .where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(models.quotesSchema.user_id, user_id), (0, drizzle_orm_1.eq)(models.quotesSchema.is_on, true))).execute();
     return quotes.map(quote => new quote_model_1.Quote(quote));
 });
+const cancelQuote = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const [quote] = yield database_1.db.update(models.quotesSchema)
+        .set({ status: 'rejected' })
+        .where((0, drizzle_orm_1.eq)(models.quotesSchema.id, id))
+        .returning();
+    return new quote_model_1.Quote(quote);
+});
 const deleteQuote = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const [quote] = yield database_1.db.update(models.quotesSchema)
         .set({ is_on: false })
@@ -102,9 +121,13 @@ const deleteQuote = (id) => __awaiter(void 0, void 0, void 0, function* () {
         .returning();
     return new quote_model_1.Quote(quote);
 });
-const quotesServices = {
+exports.quotesServices = {
     createQuote,
     updateQuote,
     getQuoteById,
-    deleteQuote
+    deleteQuote,
+    getQuotesByDate,
+    getQuotesByPlace,
+    getQuotesByUser,
+    cancelQuote
 };

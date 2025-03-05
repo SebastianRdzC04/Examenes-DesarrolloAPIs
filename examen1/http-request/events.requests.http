@@ -1,5 +1,90 @@
 ### GET request to example server
-GET https://examples.http-client.intellij.net/get
-    ?generated-in=WebStorm
+
+@baseUrl = localhost:777
+@eventsUrl = localhost:777/events
 
 ###
+
+### POST para iniciar sesión
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "phone": "12345678901",
+  "password": "123456"
+}
+> {%
+    client.global.set("token", response.body.data.token);
+%}
+###
+
+### POST para crear un evento
+
+POST {{eventsUrl}}/create
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "data": {
+        "quote_id": "911cc747-5f99-4c4e-a973-f6c4e4d985c9",
+        "time_toStart": "20:00",
+        "total_payed": "200"
+
+    }
+}
+
+###
+
+### GET para obtener un evento por su id
+
+GET {{eventsUrl}}/08a7a9e9-3d18-40e6-8977-47e77d8b8207
+Authorization: Bearer {{token}}
+
+###
+
+### GET para obtener los eventos de un usuario
+
+GET {{eventsUrl}}/user/1d60d422-65d0-42cd-bf26-e738fd863bf8
+Authorization: Bearer {{token}}
+
+###
+
+### GET para obtener los eventos por lugar
+
+GET {{eventsUrl}}/place/45a1751d-f9a7-4307-b16c-a53e08b24256
+
+###
+
+### DETELE para eliminar un evento
+
+DELETE {{eventsUrl}}/08a7a9e9-3d18-40e6-8977-47e77d8b8207
+
+###
+
+### POST para iniciar un evento
+
+POST {{eventsUrl}}/start/08a7a9e9-3d18-40e6-8977-47e77d8b8207
+
+###
+
+### POST para finalizar un evento
+
+POST {{eventsUrl}}/finish/08a7a9e9-3d18-40e6-8977-47e77d8b8207
+
+###
+
+### POST para cancelar un evento
+
+POST {{eventsUrl}}/cancel/08a7a9e9-3d18-40e6-8977-47e77d8b8207
+
+###
+
+### POST para editar un evento por parte del usuario
+
+POST {{eventsUrl}}/08a7a9e9-3d18-40e6-8977-47e77d8b8207/user
+
+###
+
+### POST para editar un evento por parte del admin
+
+POST {{eventsUrl}}/08a7a9e9-3d18-40e6-8977-47e77d8b8207/admin

@@ -63,7 +63,7 @@ const createUser = (userData) => __awaiter(void 0, void 0, void 0, function* () 
         throw new Error('User not found');
     }
     const userCreated = new user_model_1.User(userWithRole);
-    return userCreated;
+    return userWithRole;
 });
 const getUserByPhone = (phone) => __awaiter(void 0, void 0, void 0, function* () {
     const [user] = yield database_1.db.select()

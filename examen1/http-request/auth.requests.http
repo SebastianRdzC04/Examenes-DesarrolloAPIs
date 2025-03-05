@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
   "data": {
-    "phone": "4714980590",
+    "phone": "12345678901",
     "password": "123456",
     "username": "qje mamadota ya jalo"
   }
@@ -20,6 +20,9 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-    "phone": "8714980534",
+    "phone": "12345678901",
     "password": "123456"
 }
+> {%
+    client.global.set("token", response.body.data.token);
+%}
